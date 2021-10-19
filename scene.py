@@ -1,11 +1,4 @@
 """
-Foo all the Bars
+Getting started with manim (used for equation part of ExpBeatsAll)
 """
 
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()
