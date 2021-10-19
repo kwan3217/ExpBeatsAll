@@ -29,14 +29,18 @@ class LHopitalsRule(Scene):
                  coefs+((r"{{x}}^{{%d}}"%order if order>1 else r"{{x}}") if order>0 else "")+r"\\"+
                  r" &= "+poly_result(order=order,max_order=max_order))
             return tex
-        iftex=r"\mbox{if }\lim_{x\rightarrow \infty}f(x)=\infty"
-        formulaif = MathTex(iftex, color=BLACK)
-        formulaifY = MathTex(r"{{\checkmark}}"+iftex, color=BLACK,tex_to_color_map={"\checkmark":"#008000"}).shift(LEFT*3.5+UP*3.5)
-        formulaifN = MathTex(r"{{X}}"+iftex, color=BLACK,tex_to_color_map={"X":"#ff0000"}).next_to(formulaifY,ORIGIN)
-        andtex=r"\mbox{and }\lim_{x\rightarrow \infty}g(x)=\infty"
-        formulaand = MathTex(andtex, color=BLACK)
-        formulaandY = MathTex(r"{{\checkmark}}"+andtex, color=BLACK,tex_to_color_map={"\checkmark":"#008000"}).shift(LEFT*3.5+DOWN*0.5)
-        formulaandN = MathTex(r"{{X}}"+andtex, color=BLACK,tex_to_color_map={"X":"#ff0000"}).next_to(formulaandY,ORIGIN)
+        iftex=r"\lim_{x\rightarrow \infty}f(x)=\infty"
+        formulaif = MathTex("{{\mbox{if } }}"+iftex, color=BLACK)
+        formulaifY = MathTex(iftex, color=BLACK,tex_to_color_map={"\checkmark":"#008000"}).shift(LEFT*3.5+UP*3.5)
+        position_list=reversed([RIGHT,RIGHT*0.5,RIGHT*0.5+DOWN,LEFT*0.5+DOWN,LEFT*0.5,LEFT,UP])
+        octagonif=RegularPolygon(n=8,color=BLACK,fill_color='#cc0000',fill_opacity=1.0,stroke_width=6).rotate(22.5*DEGREES).scale(0.3).next_to(formulaifY,LEFT)
+        arrowif=Polygon(*position_list,color=BLACK,fill_color="#00cc00",fill_opacity=1.0).scale(0.3).rotate(-90*DEGREES).next_to(formulaifY,LEFT)
+        andtex=r"\lim_{x\rightarrow \infty}g(x)=\infty"
+        formulaand = MathTex("{{\mbox{and } }}"+andtex, color=BLACK)
+        formulaandY = MathTex(andtex, color=BLACK,tex_to_color_map={"\checkmark":"#008000"}).shift(LEFT*3.5+DOWN*0.5)
+        position_list=reversed([RIGHT,RIGHT*0.5,RIGHT*0.5+DOWN,LEFT*0.5+DOWN,LEFT*0.5,LEFT,UP])
+        octagonand=RegularPolygon(n=8,color=BLACK,fill_color='#cc0000',fill_opacity=1.0,stroke_width=6).rotate(22.5*DEGREES).scale(0.3).next_to(formulaandY,LEFT)
+        arrowand=Polygon(*position_list,color=BLACK,fill_color="#00cc00",fill_opacity=1.0).scale(0.3).rotate(-90*DEGREES).next_to(formulaandY,LEFT)
         formulathen = MathTex(r"\mbox{then }\lim_{x\rightarrow \infty}{ f(x)\over g(x) }", r"={ f'(x) \over g'(x) }", color=BLACK)
         self.camera.background_color=background
         formulaif.next_to(formulaand,UP)
@@ -48,6 +52,7 @@ class LHopitalsRule(Scene):
         self.camera.background_color=background
         self.play(TransformMatchingTex(formulaif,formulaifY),
                   TransformMatchingTex(formulaand,formulaandY),
+                  FadeIn(arrowif),FadeIn(arrowand),
                   FadeOut(formulathen))
         self.wait(0.5)
         vline=Line(start=UP*4,end=DOWN*4,color=BLACK)
@@ -58,6 +63,8 @@ class LHopitalsRule(Scene):
         lh=MathTex(r'\frac{f(x)}{g(x)}&=\frac{'+poly_result(4,4)+"}{"+poly_result(5,5)+r"}\\&=???",color=BLACK).shift(RIGHT*3.5)
         fx=MathTex(poly_tex('f',4,max_order=4),color=BLACK).shift(UP*2+LEFT*3.5)
         gx=MathTex(poly_tex('g',5,max_order=5),color=BLACK).shift(DOWN*2+LEFT*3.5)
+        signf=arrowif
+        signg=arrowand
         self.play(FadeIn(fx),FadeIn(gx),FadeIn(lh))
         self.wait(1)
         dfx = MathTex(poly_tex('f', 3, max_order=4), color=BLACK).next_to(fx,ORIGIN)
@@ -72,13 +79,21 @@ class LHopitalsRule(Scene):
         for i in range(2,4+1):
             dfx=MathTex(poly_tex('f',4-i,max_order=4),color=BLACK).next_to(fx,ORIGIN)
             dgx=MathTex(poly_tex('g',5-i,max_order=5),color=BLACK).next_to(gx,ORIGIN)
+            result4=poly_result(4-i, 4)
+            dsignf=arrowif if result4=="\infty" else octagonif
+            result5=poly_result(5-i, 5)
+            dsigng=arrowand if result5=="\infty" else octagonand
             dlh = MathTex(
-                r'\frac{f(x)}{g(x)}&=\frac{' + poly_result(4-i, 4) + "}{" + poly_result(5-i, 5) + r"}\\&="+("???" if i<4 else "0"),color=BLACK).next_to(lh,ORIGIN)
+                r'\frac{f(x)}{g(x)}&=\frac{' + result4 + "}{" + result5 + r"}\\&="+("???" if i<4 else "0"),color=BLACK).next_to(lh,ORIGIN)
             self.play(TransformMatchingTex(fx,dfx,path_arc=90 * DEGREES),
                       TransformMatchingTex(gx,dgx,path_arc=90 * DEGREES),
-                      FadeOut(lh),FadeIn(dlh))
+                      FadeOut(lh),FadeIn(dlh),
+                      FadeOut(signf),FadeIn(dsignf),
+                      FadeOut(signg),FadeIn(dsigng))
             fx=dfx
             gx=dgx
+            signf=dsignf
+            signg=dsigng
             lh=dlh
         self.wait(1)
 
