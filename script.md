@@ -142,5 +142,10 @@ goes to zero, as we reach the near-vacuum of space.
 I'd like to give a big shout-out to 3blue1brown and the Summer of Math 
 Explanation program, for the inspiration to finally do *something* and
 get it posted. Thanks also to Think Twice for inspiration about mathematics
-videos that don't have to be a full lesson, just one shiny gem. This has
-been kwan3217, saying if at first you don't succeed, fly, fly again.
+videos that don't have to be a full lesson, just one shiny gem. 
+
+All animations in this video were described using Python, using Manim CE
+and my own PictureBox library. The audio was recorded in OBS, run through
+noise reduction in Audacity, and the final video is edited in Kdenlive.
+ 
+This has been kwan3217, saying if at first you don't succeed, fly, fly again.
