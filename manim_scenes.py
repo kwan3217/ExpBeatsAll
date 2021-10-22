@@ -4,37 +4,12 @@ Some of the shots are in manim. Maybe eventually all of the shots will be.
 
 from manim import *
 import numpy as np
+from poly import *
 
 background="#e0e0ff"
 eqn_color='#1a5fb4'
 
-def poly_result(order=5, max_order=5):
-    product = max_order
-    if order != max_order:
-        for coef in range(max_order - 1, order, -1):
-            product *= coef
-    result = (r"\infty" if order > 0 else str(product))
-    return result
 
-
-def poly_tex(name='f', order=5, max_order=5,mark_coef=True,mark_poly=False):
-    open_coef=" {{ " if mark_coef else ""
-    close_coef=" }} " if mark_coef else ""
-    open_poly=" {{ " if mark_poly else ""
-    close_poly=" }} " if mark_poly else ""
-    if order == max_order:
-        coefs = ""
-        primes = ""
-    else:
-        coefs = open_coef+"%d" % max_order+close_coef
-        primes = "'"
-        for coef in range(max_order - 1, order, -1):
-            primes += "'"
-            coefs = open_coef+"%d"%coef+close_coef+open_coef+r"\cdot"+close_coef + coefs
-    tex = (r"{{" + name + r"}}" + primes + r"{{(x)}} &= " +
-           open_poly+coefs + ((r"{{x}}^{{%d}}" % order if order > 1 else r"{{x}}") if order > 0 else "")+close_poly + r"\\" +
-           r" &= {{ " + poly_result(order=order, max_order=max_order))+" }} "
-    return tex
 
 
 stop = RegularPolygon(n=8, color=BLACK, fill_color='#cc0000', fill_opacity=1.0, stroke_width=6).rotate(
@@ -66,28 +41,29 @@ class LHopitalsRule(Scene):
         self.play(Create(hline1,run_time=0.5))
         self.wait()
         lh=MathTex(r'\frac{f(x)}{g(x)}&=\frac{'+poly_result(4,4)+"}{"+poly_result(5,5)+r"}\\&=???",color=eqn_color).shift(RIGHT*3.5)
-        fx=MathTex(poly_tex('f',4,max_order=4),color=eqn_color).shift(UP*2+LEFT*3.5)
-        gx=MathTex(poly_tex('g',5,max_order=5),color=eqn_color).shift(DOWN*2+LEFT*3.5)
+        fx=MathTex(lhpoly_tex('f', 4, d=0), color=eqn_color).shift(UP * 2 + LEFT * 3.5)
+        gx=MathTex(lhpoly_tex('g', 5, d=0), color=eqn_color).shift(DOWN * 2 + LEFT * 3.5)
         fsign=go.copy().next_to(fx,RIGHT)
         gsign=go.copy().next_to(gx,RIGHT)
         self.play(FadeIn(fx),FadeIn(gx),FadeIn(lh),FadeIn(fsign),FadeIn(gsign))
         self.wait(1)
-        dfx = MathTex(poly_tex('f', 3, max_order=4), color=eqn_color).next_to(fx,ORIGIN)
+        dfx = MathTex(lhpoly_tex('f', 4, d=1), color=eqn_color).next_to(fx, ORIGIN)
         self.play(TransformMatchingTex(fx, dfx, path_arc=90 * DEGREES))
         self.wait(1)
         fx=dfx
-        dgx = MathTex(poly_tex('g', 4, max_order=5), color=eqn_color).next_to(gx,ORIGIN)
+        dgx = MathTex(lhpoly_tex('g', 5, d=1), color=eqn_color).next_to(gx, ORIGIN)
         self.play(TransformMatchingTex(gx, dgx, path_arc=90 * DEGREES))
         self.wait(1)
         gx=dgx
 
-        for i in range(2,4+1):
-            dfx=MathTex(poly_tex('f',4-i,max_order=4),color=eqn_color).next_to(fx,ORIGIN)
-            dgx=MathTex(poly_tex('g',5-i,max_order=5),color=eqn_color).next_to(gx,ORIGIN)
-            result4=poly_result(4-i, 4)
+        #Do the rest of the derivatives simultaneously. Also update result.
+        for d in range(2,4+1):
+            dfx=MathTex(lhpoly_tex('f', 4, d=d), color=eqn_color).next_to(fx, ORIGIN)
+            dgx=MathTex(lhpoly_tex('g', 5, d=d), color=eqn_color).next_to(gx, ORIGIN)
+            result4=poly_result(4, d)
             dsignf=go.copy() if result4 == "\infty" else stop.copy()
             dsignf.next_to(dfx,RIGHT)
-            result5=poly_result(5-i, 5)
+            result5=poly_result(5, d)
             dsigng=go.copy() if result5 == "\infty" else stop.copy()
             dsigng.next_to(dgx,RIGHT)
             dlh = MathTex(
@@ -110,10 +86,10 @@ class LHopitalsFlip(Scene):
         hline1=Line(start=ORIGIN,end=LEFT*8,color=eqn_color)
         self.add(vline)
         self.add(hline1)
-        lh=MathTex(r'\frac{f(x)}{g(x)}&={ {{'+poly_result(4-4,4)+"}} \over {{"+poly_result(5-4,5)+r"}} }\\&= {{0}}",color=eqn_color).shift(RIGHT*3.5)
-        lh2=MathTex(r'\frac{f(x)}{g(x)}&={ {{'+poly_result(4-4,4)+"}} \over {{"+poly_result(5-4,5)+r"}} }\\&= {{\infty}}",color=eqn_color).shift(RIGHT*3.5)
-        fx=MathTex(poly_tex('f',4-4,max_order=4,mark_coef=False,mark_poly=True),color=eqn_color).shift(UP*2+LEFT*3.5)
-        gx=MathTex(poly_tex('g',5-4,max_order=5,mark_coef=False,mark_poly=True),color=eqn_color).shift(DOWN*2+LEFT*3.5)
+        lh=MathTex(r'\frac{f(x)}{g(x)}&={ {{'+poly_result(4,d=4)+"}} \over {{"+poly_result(5,d=4)+r"}} }\\&= {{0}}",color=eqn_color).shift(RIGHT*3.5)
+        lh2=MathTex(r'\frac{f(x)}{g(x)}&={ {{'+poly_result(5,d=4)+"}} \over {{"+poly_result(4,d=4)+r"}} }\\&= {{\infty}}",color=eqn_color).shift(RIGHT*3.5)
+        fx=MathTex(lhpoly_tex('f', 4, d=4, mark_coef=False, mark_poly=True), color=eqn_color).shift(UP * 2 + LEFT * 3.5)
+        gx=MathTex(lhpoly_tex('g', 5, d=4, mark_coef=False, mark_poly=True), color=eqn_color).shift(DOWN * 2 + LEFT * 3.5)
         fsign=stop.copy().next_to(fx,RIGHT)
         gsign=go.copy().next_to(gx,RIGHT)
         self.add(lh)
