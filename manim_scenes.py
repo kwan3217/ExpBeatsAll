@@ -33,7 +33,10 @@ class LHopitalsRule(Scene):
         self.play(FadeOut(formulaif),
                   FadeOut(formulaand),
                   FadeOut(formulathen))
-        self.wait(0.5)
+        self.wait()
+
+class LHoptialsPoly(Scene):
+    def construct(self):
         vline=Line(start=UP*4,end=DOWN*4,color=eqn_color)
         hline1=Line(start=ORIGIN,end=LEFT*8,color=eqn_color)
         self.play(Create(vline,run_time=0.5))
@@ -44,6 +47,7 @@ class LHopitalsRule(Scene):
         gx=MathTex(lhpoly_tex('g', 5, d=0), color=eqn_color).shift(DOWN * 2 + LEFT * 3.5)
         fsign=go.copy().next_to(fx,RIGHT)
         gsign=go.copy().next_to(gx,RIGHT)
+        #Do the first derivative one side at a time
         self.play(FadeIn(fx),FadeIn(gx),FadeIn(lh),FadeIn(fsign),FadeIn(gsign))
         self.wait(1)
         dfx = MathTex(lhpoly_tex('f', 4, d=1), color=eqn_color).next_to(fx, ORIGIN)
