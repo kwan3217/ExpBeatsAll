@@ -110,26 +110,77 @@ class LHopitalsFlip(Scene):
 class DynPresDerivation(Scene):
     def construct(self):
         self.camera.background_color=background
-        q=MathTex(r'q &=w( {{ v }} )\rho( {{ h }} )\\',color=eqn_color).shift(UP*3.2)
-        w=MathTex(r'w({{v}})&\propto {{v}}^2 \\',color='#ff0000').shift(UP*2+LEFT*5)
-        w_axes = Axes(x_range=[0, 5.00001, 1], y_range=[0, 25.00001, 5],x_length=6,axis_config={"color":eqn_color},tips=False).shift(LEFT*3.5)
-        w_plot=w_axes.get_graph(lambda x: x ** 2, color='#ff0000')
-        rho=MathTex(r'\rho( {{ h }} )&\propto e^{-k {{ h }} }',color='#0000ff').shift(UP*2+RIGHT*3)
-        rho_axes = Axes(x_range=[0, 5.00001, 1], y_range=[0, 25.00001, 5],x_length=6,axis_config={"color":eqn_color},tips=False).shift(RIGHT*3.5)
+        f_w=lambda x:x**2
+        f_rho=lambda x:25*np.exp(-x)
+        f_q=lambda x:f_w(x)*f_rho(x)
+        f_rrho=lambda x:np.minimum(5/f_rho(x),50)
+
+        q_tex=MathTex(r'q &=w( {{ v }} )\rho( {{ h }} )\\',color=eqn_color).shift(UP*3.2)
+        w_tex=MathTex(r'w({{v}})&\propto {{v}}^2 \\',color='#ff0000').shift(UP*2+LEFT*5)
+        w_axes = Axes(x_range=[0, 5.00001, 1], y_range=[0, 25.00001, 5],x_length=6,y_length=5,axis_config={"color":eqn_color},tips=False).shift(DOWN*0.5+LEFT*3.5)
+        w_plot=w_axes.get_graph(f_w, color='#ff0000')
+        rho_tex=MathTex(r'\rho( {{ h }} )&\propto e^{-k {{ h }} }',color='#0000ff').shift(UP*2+RIGHT*3)
+        rho_axes = Axes(x_range=[0, 5.00001, 1], y_range=[0, 25.00001, 5],x_length=6,y_length=5, axis_config={"color":eqn_color},tips=False).shift(DOWN*0.5+RIGHT*3.5)
         rho_plot=rho_axes.get_graph(lambda x: 25*np.exp(-x), color='#0000ff')
-        self.play(FadeIn(q))
+        both_axes=Axes(x_range=[0,5.00001,1],y_range=[0,25.0001,5],y_length=5,axis_config={"color":eqn_color},tips=False).shift(DOWN*0.5)
+        self.play(FadeIn(q_tex))
         self.wait()
-        self.play(AnimationGroup(FadeIn(w),Create(w_axes),Create(w_plot),lag_ratio=0.5))
+        self.play(AnimationGroup(FadeIn(w_tex),Create(w_axes),Create(w_plot),lag_ratio=0.5))
         self.wait()
-        self.play(AnimationGroup(FadeIn(rho),Create(rho_axes),Create(rho_plot),lag_ratio=0.5))
+        self.play(AnimationGroup(FadeIn(rho_tex),Create(rho_axes),Create(rho_plot),lag_ratio=0.5))
         self.wait()
-        q2=MathTex(r'q &=w( {{ t }} )\rho( {{ t }} )\\',color=eqn_color).next_to(q,ORIGIN)
-        w2=MathTex(r'w({{t}})&\propto {{t}}^2 \\',color='#ff0000').next_to(w,ORIGIN)
-        rho2=MathTex(r'\rho( {{ t }} )&\propto e^{-k {{ t }} }',color='#0000ff').next_to(rho,ORIGIN)
-        self.play(TransformMatchingTex(q,q2),
-                  TransformMatchingTex(w, w2),
-                  TransformMatchingTex(rho, rho2))
+        q2=MathTex(r'q(t) &=w( {{ t }} )\rho( {{ t }} )\\',color=eqn_color).next_to(q_tex,ORIGIN)
+        w2=MathTex(r'w({{t}})&\propto {{t}}^2 \\',color='#ff0000').next_to(w_tex,ORIGIN)
+        rho2=MathTex(r'\rho( {{ t }} )&\propto e^{-k {{ t }} }',color='#0000ff').next_to(rho_tex,ORIGIN)
+        r_rho_plot=rho_axes.get_graph(f_rrho, color='#0000ff')
+        self.play(TransformMatchingTex(q_tex,q2),
+                  TransformMatchingTex(w_tex, w2),
+                  TransformMatchingTex(rho_tex, rho2))
         self.wait()
+        rho3=MathTex(r'\frac{1}{\rho(t)}&\propto {e^{kt}}',color='#0000ff').next_to(rho_tex,ORIGIN)
+        self.play(FadeOut(rho2),FadeIn(rho3),
+                  Transform(rho_plot,r_rho_plot))
+        self.wait()
+        q3=MathTex(r'q(t) &\propto\frac{t^2}{e^{kt}}',color=eqn_color).next_to(q2,ORIGIN)
+        self.play(FadeOut(q2),FadeIn(q3))
+        self.wait()
+        q4=MathTex(r'q(t) &\propto\frac{f(t)}{g(t)}',color=eqn_color).next_to(q2,ORIGIN)
+        self.play(FadeOut(q3),FadeIn(q4))
+        self.wait()
+        self.play(FadeOut(q4),FadeIn(q3))
+        self.wait()
+        both_axes=Axes(x_range=[0,100.00001,1],y_range=[0,25.0001,5],y_length=5,x_length=100*12/5,axis_config={"color":eqn_color},tips=False).shift(RIGHT*50*12/5+LEFT*6+DOWN*0.5)
+        w_plot2=both_axes.get_graph(f_w, color='#ff0000')
+        r_rho_plot2=both_axes.get_graph(f_rrho, color='#0000ff')
+        q_plot=both_axes.get_graph(f_q, color=eqn_color)
+        self.play(FadeOut(w_axes),FadeOut(rho_axes),FadeIn(both_axes),
+                  Transform(w_plot,w_plot2),Transform(rho_plot,r_rho_plot2),
+                  FadeIn(q_plot),
+                  w2.animate.shift(RIGHT*1))
+        self.wait()
+        t=ValueTracker(0)
+        w_point=Dot(point=[both_axes.coords_to_point(t.get_value(),f_w(t.get_value()))],color='#ff0000')
+        w_point.add_updater(lambda x:x.move_to(both_axes.c2p(t.get_value(),f_w( t.get_value() ) ) ) )
+        rrho_point=Dot(point=[both_axes.coords_to_point(t.get_value(),f_rrho(t.get_value()))],color='#0000ff')
+        rrho_point.add_updater(lambda x:x.move_to(both_axes.c2p(t.get_value(),f_rrho( t.get_value() ) ) ) )
+        q_point=Dot(point=[both_axes.coords_to_point(t.get_value(),f_q(t.get_value()))],color=eqn_color)
+        q_point.add_updater(lambda x:x.move_to(both_axes.c2p(t.get_value(),f_q( t.get_value() ) ) ) )
+        self.add(w_point,rrho_point,q_point)
+        self.play(t.animate.set_value(2),run_time=5)
+        self.wait()
+        self.play(t.animate.set_value(5),run_time=5)
+        self.wait()
+        #Old red and blue curves weren't fading, so clear everything and add back what we need
+        self.clear()
+        self.add(w_plot2,r_rho_plot2,w_point,rrho_point,w2,rho3,q3,q_point,q_plot,both_axes)
+        self.play(FadeOut(w_plot2),FadeOut(r_rho_plot2),FadeOut(w_point),FadeOut(rrho_point),FadeOut(w2),FadeOut(rho3))
+        self.wait()
+        self.play(t.animate(rate_func=rate_functions.ease_in_sine).set_value(20),
+                  both_axes.animate(rate_func=rate_functions.ease_in_sine).shift(LEFT*18*12/5),
+                  q_plot.animate(rate_func=rate_functions.ease_in_sine).shift(LEFT*18*12/5),run_time=12
+                  )
+        self.wait()
+
 
 class Title(Scene):
     def construct(self):
