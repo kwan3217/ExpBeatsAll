@@ -244,7 +244,7 @@ class Shoutout(Scene):
             Arc(radius=0.75,start_angle=PI,angle=3*PI/2,color="#89b2da",stroke_width=40),
             Arc(radius=0.75, start_angle=PI/2, angle=PI / 2, color="#69401a", stroke_width=40)
         ).next_to(kwanlogo,LEFT)
-        thinktwice=SVGMobject("clipart/ThinkTwice.svg").next_to(kwanlogo,RIGHT)
+        thinktwice=SVGMobject("clipart/ThinkTwice.svg").scale(0.8).next_to(kwanlogo,RIGHT)
         kdenlive=SVGMobject("clipart/Kdenlive-logo.svg").next_to(kwanlogo,UP)
         git=SVGMobject("clipart/Git-logo.svg").next_to(kwanlogo,UP+RIGHT)
         tux=SVGMobject("clipart/Tux.svg").next_to(kwanlogo,UP+LEFT)
