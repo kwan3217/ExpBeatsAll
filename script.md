@@ -115,13 +115,17 @@ and ever.
 
 So what is this little gem used for? The one near and dear to my 
 heart is in aerospace engineering, and it's called maximum dynamic
-pressure. In a rocket launch, dynamic pressure tells us how hard
-the relative wind is blowing against the rocket. Once the rocket passes 
-through maximum dynamic pressure, or max $q$, the pressure on the rocket
-decreases, even though the speed and altitude are still increasing.
-The rocket has punched through the thick part of the atmosphere and
-things just get easier from there on. Once the rocket has passed max
-$q$, it has cleared one of the highest hurdles on the way to orbit.
+pressure. Anything moving through air, including a rocket, has
+to move the air out of the way. The air itself exerts a force back
+on the rocket, as the equal and opposite reaction that we learned from
+Newton's third law. To begin with, the
+pressure on the rocket increases as its speed increases. However, 
+once the rocket passes through maximum dynamic pressure, or max $q$,
+the pressure on the rocket decreases, even though the speed and 
+altitude are still increasing. The rocket has punched through the 
+thick part of the atmosphere and things just get easier from there
+on. Once the rocket has passed max $q$, it has cleared one of the 
+highest hurdles on the way to orbit.
 
 So why is there a *max* $q$? Dynamic pressure itself is calculated
 from two terms, one of which is proportional to the square of the
