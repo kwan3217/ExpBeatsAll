@@ -14,8 +14,7 @@ eqn_color='#1a5fb4'
 
 stop = RegularPolygon(n=8, color=BLACK, fill_color='#cc0000', fill_opacity=1.0, stroke_width=6).rotate(
     22.5 * DEGREES).scale(0.3)
-go_points = reversed([RIGHT, RIGHT * 0.5, RIGHT * 0.5 + DOWN, LEFT * 0.5 + DOWN, LEFT * 0.5, LEFT, UP])
-go = Polygon(*go_points, color=BLACK, fill_color="#00cc00", fill_opacity=1.0).scale(0.3).rotate(-90 * DEGREES)
+go = Text('?',font="Decker Bold",color='#00cc00',stroke_width=6,stroke_color=BLACK,font_size=80)
 
 formulaif = MathTex(r"\mbox{if }\lim_{x\rightarrow \infty}f(x)=\infty", color=eqn_color)
 formulaand = MathTex(r"\mbox{and }\lim_{x\rightarrow \infty}g(x)=\infty", color=eqn_color)
